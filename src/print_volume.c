@@ -32,6 +32,7 @@
 #include "queue.h"
 
 #define STRING_SIZE 10
+#define HIGH_THRESHOLD 100
 
 #define ALSA_VOLUME(channel)                                                    \
     err = snd_mixer_selem_get_##channel##_dB_range(elem, &min, &max) ||         \
@@ -101,7 +102,7 @@ void print_volume(volume_ctx_t *ctx) {
 
         int ivolume = DECOMPOSE_VOLUME(cvolume);
         bool muted = DECOMPOSE_MUTED(cvolume);
-        if (muted) {
+        if (muted || ivolume > HIGH_THRESHOLD) {
             START_COLOR("color_degraded");
             pbval = 0;
         }
@@ -123,7 +124,7 @@ void print_volume(volume_ctx_t *ctx) {
         int ivolume = DECOMPOSE_VOLUME(cvolume);
         bool muted = DECOMPOSE_MUTED(cvolume);
         if (ivolume >= 0 && success) {
-            if (muted) {
+            if (muted || ivolume > HIGH_THRESHOLD) {
                 START_COLOR("color_degraded");
                 pbval = 0;
             }
